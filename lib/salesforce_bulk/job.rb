@@ -63,8 +63,12 @@ module SalesforceBulk
       headers = Hash["Content-Type" => "text/csv; charset=UTF-8"]
       response = @@connection.post_xml(nil, path, @@records, headers)
       response_parsed = XmlSimple.xml_in(response)
-
-      @@batch_id = response_parsed['id'][0]
+      ids = response_parsed['id']
+      if ids.nil?
+	exception_message = response_parsed['exceptionMessage'][0]
+        raise SalesforceApiException exception_message
+      end
+      @@batch_id = ids[0]
     end
 
     def add_batch()
