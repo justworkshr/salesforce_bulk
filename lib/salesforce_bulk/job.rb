@@ -63,9 +63,10 @@ module SalesforceBulk
       headers = Hash["Content-Type" => "text/csv; charset=UTF-8"]
       response = @@connection.post_xml(nil, path, @@records, headers)
       response_parsed = XmlSimple.xml_in(response)
-      ids = response_parsed['id'] unless response_parsed.nil?
-      if ids.nil? or ids[0].blank?
-        raise EmptyResponseException "Got empty response adding query to the SF job id #{@@job_id}"
+      ids = response_parsed['id']
+      if ids.nil?
+	exception_message = response_parsed['exceptionMessage'][0]
+        raise SalesforceApiException exception_message
       end
       @@batch_id = ids[0]
     end
