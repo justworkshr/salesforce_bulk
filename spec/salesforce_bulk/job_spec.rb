@@ -7,6 +7,8 @@ require 'csv'
 RSpec.describe SalesforceBulk::Job do
   let (:version) { "34.0" }
   let (:job_id) { "some-job-id" }
+  let (:username) { "pirate_jack@trailhead-pirates.org" }
+  let (:password) { "hunter2" }
   let (:batch_id) { "some-batch-id" }
   let (:operation) { "query" } # query or update
   let (:sobject) { "Lead" }
@@ -15,8 +17,8 @@ RSpec.describe SalesforceBulk::Job do
   let (:xml_headers) { {'Content-Type' => 'application/xml; charset=utf-8'} }
   let (:connection) {
     # https://trailhead.salesforce.com/content/learn/modules/api_basics/api_basics_soap
-      allow_any_instance_of(SalesforceBulk::Connection).to receive(:post_xml).with("test.salesforce.com", "/services/Soap/u/34.0", '<?xml version="1.0" encoding="utf-8" ?><env:Envelope xmlns:xsd="http://www.w3.org/2001/XMLSchema"    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"    xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">  <env:Body>    <n1:login xmlns:n1="urn:partner.soap.sforce.com">      <n1:username>pirate_jack@trailhead-pirates.org</n1:username>      <n1:password>2dRh4HVDCJjFvRJu5ivMV03pMQ</n1:password>    </n1:login>  </env:Body></env:Envelope>', {'Content-Type' => 'text/xml; charset=utf-8', 'SOAPAction' => 'login'}).and_return('<?xml version="1.0" encoding="UTF-8"?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns="urn:partner.soap.sforce.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><soapenv:Body><loginResponse><result><metadataServerUrl>metadataserverurl</metadataServerUrl><passwordExpired>false</passwordExpired><sandbox>true</sandbox><serverUrl>sandboxserverurl.tld</serverUrl><sessionId>some-session-id</sessionId><userId>blahblahuserId</userId><userInfo><accessibilityMode>false</accessibilityMode><currencySymbol>$</currencySymbol><orgAttachmentFileSizeLimit>5242880</orgAttachmentFileSizeLimit><orgDefaultCurrencyIsoCode>USD</orgDefaultCurrencyIsoCode><orgDisallowHtmlAttachments>false</orgDisallowHtmlAttachments><orgHasPersonAccounts>false</orgHasPersonAccounts><organizationId>blahblahorgId</organizationId><organizationMultiCurrency>false</organizationMultiCurrency><organizationName>Justworks</organizationName><profileId>blahblahprofileID</profileId><roleId xsi:nil="true"/><sessionSecondsValid>7200</sessionSecondsValid><userDefaultCurrencyIsoCode xsi:nil="true"/><userEmail>blahblahemail@justworks.com</userEmail><userFullName>Payroll Service</userFullName><userId>blahblahuserId</userId><userLanguage>en_US</userLanguage><userLocale>en_US</userLocale><userName>blahblahusername</userName><userTimeZone>America/New_York</userTimeZone><userType>Standard</userType><userUiSkin>Theme3</userUiSkin></userInfo></result></loginResponse></soapenv:Body></soapenv:Envelope>')
-      SalesforceBulk::Connection.new("pirate_jack@trailhead-pirates.org", "2dRh4HVDCJjFvRJu5ivMV03pMQ", version, true)
+      allow_any_instance_of(SalesforceBulk::Connection).to receive(:post_xml).with("test.salesforce.com", "/services/Soap/u/34.0", '<?xml version="1.0" encoding="utf-8" ?><env:Envelope xmlns:xsd="http://www.w3.org/2001/XMLSchema"    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"    xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">  <env:Body>    <n1:login xmlns:n1="urn:partner.soap.sforce.com">      <n1:username>' + username + '</n1:username>      <n1:password>' + password + '</n1:password>    </n1:login>  </env:Body></env:Envelope>', {'Content-Type' => 'text/xml; charset=utf-8', 'SOAPAction' => 'login'}).and_return('<?xml version="1.0" encoding="UTF-8"?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns="urn:partner.soap.sforce.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><soapenv:Body><loginResponse><result><metadataServerUrl>metadataserverurl</metadataServerUrl><passwordExpired>false</passwordExpired><sandbox>true</sandbox><serverUrl>sandboxserverurl.tld</serverUrl><sessionId>some-session-id</sessionId><userId>blahblahuserId</userId><userInfo><accessibilityMode>false</accessibilityMode><currencySymbol>$</currencySymbol><orgAttachmentFileSizeLimit>5242880</orgAttachmentFileSizeLimit><orgDefaultCurrencyIsoCode>USD</orgDefaultCurrencyIsoCode><orgDisallowHtmlAttachments>false</orgDisallowHtmlAttachments><orgHasPersonAccounts>false</orgHasPersonAccounts><organizationId>blahblahorgId</organizationId><organizationMultiCurrency>false</organizationMultiCurrency><organizationName>Justworks</organizationName><profileId>blahblahprofileID</profileId><roleId xsi:nil="true"/><sessionSecondsValid>7200</sessionSecondsValid><userDefaultCurrencyIsoCode xsi:nil="true"/><userEmail>blahblahemail@justworks.com</userEmail><userFullName>Payroll Service</userFullName><userId>blahblahuserId</userId><userLanguage>en_US</userLanguage><userLocale>en_US</userLocale><userName>blahblahusername</userName><userTimeZone>America/New_York</userTimeZone><userType>Standard</userType><userUiSkin>Theme3</userUiSkin></userInfo></result></loginResponse></soapenv:Body></soapenv:Envelope>')
+      SalesforceBulk::Connection.new(username, password, version, true)
     }
 
 
@@ -59,8 +61,11 @@ RSpec.describe SalesforceBulk::Job do
  <apexProcessingTime>0</apexProcessingTime>
 </jobInfo>')
 
-      actual_job_id = described_class.new(operation, sobject, records_or_query, external_field, connection).create_job
+      instance = described_class.new(operation, sobject, records_or_query, external_field, connection)
+      actual_job_id = instance.create_job
       expect(actual_job_id).to eq(job_id)
+      expect(instance.instance_variable_get(:@@job_id)).to eq(job_id)
+
     end
   end
 
@@ -124,7 +129,9 @@ RSpec.describe SalesforceBulk::Job do
  <apexProcessingTime>0</apexProcessingTime>
 </batchInfo>')
 
-      expect(described_class.new(operation, sobject, records_or_query, external_field, connection).add_query).to eq(batch_id)
+      instance = described_class.new(operation, sobject, records_or_query, external_field, connection)
+      expect(instance.add_query).to eq(batch_id)
+      expect(instance.instance_variable_get(:@@batch_id)).to eq(batch_id)
     end
   end
 
@@ -153,7 +160,9 @@ RSpec.describe SalesforceBulk::Job do
  <numberRecordsProcessed>0</numberRecordsProcessed>
 </batchInfo>')
 
-      expect(described_class.new(operation, sobject, records_or_query, external_field, connection).add_batch).to eq(batch_id)
+      instance = described_class.new(operation, sobject, records_or_query, external_field, connection)
+      expect(instance.add_batch).to eq(batch_id)
+      expect(instance.instance_variable_get(:@@batch_id)).to eq(batch_id)
     end
   end
 
@@ -162,7 +171,7 @@ RSpec.describe SalesforceBulk::Job do
     it 'can adhere to the contract with Salesforce' do
       instance = described_class.new(operation, sobject, records_or_query, external_field, connection)
       described_class.class_variable_set(:@@job_id, job_id)
-      described_class.class_variable_set(:@@batch_id, batch_id)
+      batch_ids = ["751D0000000004rIAA", "751D0000000004sIAA"]
 
       allow(connection).to receive(:get_request).with(nil, "job/#{job_id}/batch", Hash.new).and_return('<?xml version="1.0" encoding="UTF-8"?>
 <batchInfoList
@@ -185,9 +194,8 @@ RSpec.describe SalesforceBulk::Job do
  </batchInfo>
 </batchInfoList>')
 
-      expect(described_class.new(operation, sobject, records_or_query, external_field, connection).fetch_pk_batch_ids).to eq(["751D0000000004rIAA", "751D0000000004sIAA"])
-      # test class member
-      # do the above fdor other functions
+      expect(described_class.new(operation, sobject, records_or_query, external_field, connection).fetch_pk_batch_ids).to eq(batch_ids)
+      expect(instance.instance_variable_get(:@pk_batch_ids)).to eq(batch_ids)
     end
   end
 
