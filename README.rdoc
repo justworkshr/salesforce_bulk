@@ -22,31 +22,33 @@ If you have to do an upgrade:
 
 Build your local version of the code:
 
-{
-    gem build salesforce_bulk.gemspec
-}
+    {
+        gem build salesforce_bulk.gemspec
+    }
 
 Install that local version:
 
-{
-    gem install salesforce_bulk-{version}.gem
-} e.g.
+    {
+        gem install salesforce_bulk-{version}.gem
+    }
 
-{
-    gem install salesforce_bulk-1.0.2.gem
-}
+e.g.
+
+    {
+        gem install salesforce_bulk-1.0.2.gem
+    }
 
 Start the Ruby interactive session and import the local gem
 
-{
-    irb -rsalesforce_bulk
-}
+    {
+        irb -rsalesforce_bulk
+    }
 
 Make an example query (note the version), {similar to those in Clockwork}[https://github.com/justworkshr/clockwork_web/blob/85e815d1e43294aceef8229df89f63888804bb7f/lib/batch_runner/salesforce_leads_sync_batch_runner.rb#L7-L23]:
 
-{
-    SalesforceBulk::Api.new("USERNAME_YOU_CAN_TAKE_FROM_NEON" "PASSWORD_YOU_CAN_TAKE_FROM_NEON", api_version="34.0", in_sandbox=true).query("Lead", "select Id, Company_ID__c, OwnerId, IsConverted from Lead where Company_ID__c != null limit 5")
-}
+    {
+        SalesforceBulk::Api.new("USERNAME_YOU_CAN_TAKE_FROM_NEON" "PASSWORD_YOU_CAN_TAKE_FROM_NEON", api_version="34.0", in_sandbox=true).query("Lead", "select Id, Company_ID__c, OwnerId, IsConverted from Lead where Company_ID__c != null limit 5")
+    }
 
 
 rdoc-image:example.png
