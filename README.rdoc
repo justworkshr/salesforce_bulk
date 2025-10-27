@@ -18,10 +18,35 @@ Our main responsibility is to maintain this code and to ensure safe upgrades.
 If you have to do an upgrade:
 1. Replace the dummy requests / responses with the new version's requests / responses
 2. Manually test. For those of you who generally work in Go, this will entail:
-    a. Build your local version of the code: { gem build salesforce_bulk.gemspec }
-    b. Install that local version: { gem install salesforce_bulk-{version}.gem}. e.g. { gem install salesforce_bulk-1.0.2.gem }
-    c. Start the Ruby interactive session and import the local gem: { irb -rsalesforce_bulk }
-    d. Make an example query (note the version), {similar to those in Clockwork}[https://github.com/justworkshr/clockwork_web/blob/85e815d1e43294aceef8229df89f63888804bb7f/lib/batch_runner/salesforce_leads_sync_batch_runner.rb#L7-L23]: { SalesforceBulk::Api.new("USERNAME_YOU_CAN_TAKE_FROM_NEON" "PASSWORD_YOU_CAN_TAKE_FROM_NEON", api_version="34.0", in_sandbox=true).query("Lead", "select Id, Company_ID__c, OwnerId, IsConverted from Lead where Company_ID__c != null limit 5") }
+
+
+Build your local version of the code:
+
+{
+gem build salesforce_bulk.gemspec
+}
+
+Install that local version:
+
+{
+gem install salesforce_bulk-{version}.gem
+} e.g.
+
+{
+gem install salesforce_bulk-1.0.2.gem
+}
+
+Start the Ruby interactive session and import the local gem
+
+{
+irb -rsalesforce_bulk
+}
+
+Make an example query (note the version), {similar to those in Clockwork}[https://github.com/justworkshr/clockwork_web/blob/85e815d1e43294aceef8229df89f63888804bb7f/lib/batch_runner/salesforce_leads_sync_batch_runner.rb#L7-L23]:
+
+{
+ SalesforceBulk::Api.new("USERNAME_YOU_CAN_TAKE_FROM_NEON" "PASSWORD_YOU_CAN_TAKE_FROM_NEON", api_version="34.0", in_sandbox=true).query("Lead", "select Id, Company_ID__c, OwnerId, IsConverted from Lead where Company_ID__c != null limit 5")
+}
 
 
 rdoc-image:example.png
