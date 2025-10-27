@@ -24,4 +24,5 @@ Gem::Specification.new do |s|
 
   s.add_dependency "xml-simple"
 
+  s.add_development_dependency "rspec", "~> 3.13"
 end
