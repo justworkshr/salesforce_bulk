@@ -1,4 +1,3 @@
-require 'spec_helper'
 require 'xmlsimple'
 require 'salesforce_bulk/job'
 require 'salesforce_bulk/connection'
