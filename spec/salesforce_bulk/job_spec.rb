@@ -313,7 +313,7 @@ RSpec.describe SalesforceBulk::Job do
 
     let(:response_body_result_list) do
       <<~XML
-                <?xml version="1.0" encoding="UTF-8"?>
+        <?xml version="1.0" encoding="UTF-8"?>
         <result-list xmlns="http://www.force.com/2009/06/asyncapi/dataload">
           <result>#{result_id}</result>
         </result-list>
