@@ -6,7 +6,7 @@ require 'salesforce_bulk/connection'
 require 'csv'
 
 RSpec.describe SalesforceBulk::Job do
-  let(:version) { '34.0' }
+  let(:version) { '47.0' }
   let(:username) { 'pirate_jack@trailhead-pirates.org' }
   let(:password) { 'hunter2' }
   let(:job_id) { 'some-job-id' }
@@ -37,7 +37,7 @@ RSpec.describe SalesforceBulk::Job do
 
   subject(:sf_bulk_job) { described_class.new(operation, sobject, records_or_query, external_field, @connection) }
 
-  # The responses are based off version 34.0
+  # The responses are based off version 47.0
   # https://developer.salesforce.com/docs/atlas.en-us.196.0.api_asynch.meta/api_asynch/asynch_api_jobs_close.htm
   # The things we chose to test are based on existing usage in Clockwork, which is `query` and `update`. These underlyingly call the following tested functions.
 
@@ -47,7 +47,7 @@ RSpec.describe SalesforceBulk::Job do
     end
   end
 
-  # https://developer.salesforce.com/docs/atlas.en-us.196.0.api_asynch.meta/api_asynch/asynch_api_jobs_create.htm
+  # https://developer.salesforce.com/docs/atlas.en-us.222.0.api_asynch.meta/api_asynch/asynch_api_jobs_create.htm
   describe '#create_job' do
     let(:request_body) do
       body = <<~XML
@@ -57,14 +57,14 @@ RSpec.describe SalesforceBulk::Job do
     end
     let(:response_body) do
       <<~XML
-              <?xml version="1.0" encoding="UTF-8"?><jobInfo
+        <?xml version="1.0" encoding="UTF-8"?><jobInfo
            xmlns="http://www.force.com/2009/06/asyncapi/dataload">
          <id>#{job_id}</id>
          <operation>#{operation}</operation>
          <object>#{sobject}</object>
          <createdById>005PJ000002voWnYAI</createdById>
-         <createdDate>2025-10-17T16:42:34.000Z</createdDate>
-         <systemModstamp>2025-10-17T16:42:34.000Z</systemModstamp>
+         <createdDate>2025-10-31T23:13:39.000Z</createdDate>
+         <systemModstamp>2025-10-31T23:13:39.000Z</systemModstamp>
          <state>Open</state>
          <concurrencyMode>Parallel</concurrencyMode>
          <contentType>CSV</contentType>
@@ -75,7 +75,7 @@ RSpec.describe SalesforceBulk::Job do
          <numberBatchesTotal>0</numberBatchesTotal>
          <numberRecordsProcessed>0</numberRecordsProcessed>
          <numberRetries>0</numberRetries>
-         <apiVersion>34.0</apiVersion>
+         <apiVersion>47.0</apiVersion>
          <numberRecordsFailed>0</numberRecordsFailed>
          <totalProcessingTime>0</totalProcessingTime>
          <apiActiveProcessingTime>0</apiActiveProcessingTime>
@@ -95,7 +95,7 @@ RSpec.describe SalesforceBulk::Job do
     end
   end
 
-  # https://developer.salesforce.com/docs/atlas.en-us.196.0.api_asynch.meta/api_asynch/asynch_api_jobs_close.htm
+  # https://developer.salesforce.com/docs/atlas.en-us.222.0.api_asynch.meta/api_asynch/asynch_api_jobs_close.htm
   describe '#close_job' do
     let(:request_body) do
       body = <<~XML
@@ -111,8 +111,8 @@ RSpec.describe SalesforceBulk::Job do
          <operation>#{operation}</operation>
          <object>#{sobject}</object>
          <createdById>005PJ000002voWnYAI</createdById>
-         <createdDate>2025-10-17T16:42:34.000Z</createdDate>
-         <systemModstamp>2025-10-17T16:42:34.000Z</systemModstamp>
+         <createdDate>2025-10-31T23:13:39.000Z</createdDate>
+         <systemModstamp>2025-10-31T23:13:39.000Z</systemModstamp>
          <state>Closed</state>
          <concurrencyMode>Parallel</concurrencyMode>
          <contentType>CSV</contentType>
@@ -123,7 +123,7 @@ RSpec.describe SalesforceBulk::Job do
          <numberBatchesTotal>1</numberBatchesTotal>
          <numberRecordsProcessed>10</numberRecordsProcessed>
          <numberRetries>0</numberRetries>
-         <apiVersion>34.0</apiVersion>
+         <apiVersion>47.0</apiVersion>
          <numberRecordsFailed>0</numberRecordsFailed>
          <totalProcessingTime>0</totalProcessingTime>
          <apiActiveProcessingTime>0</apiActiveProcessingTime>
@@ -141,11 +141,11 @@ RSpec.describe SalesforceBulk::Job do
 
     it 'can adhere to the contract with Salesforce' do
       expect(sf_bulk_job.close_job).to eq({ 'apexProcessingTime' => ['0'], 'apiActiveProcessingTime' => ['0'],
-                                            'apiVersion' => [version], 'concurrencyMode' => ['Parallel'], 'contentType' => ['CSV'], 'createdById' => ['005PJ000002voWnYAI'], 'createdDate' => ['2025-10-17T16:42:34.000Z'], 'id' => ['some-job-id'], 'numberBatchesCompleted' => ['1'], 'numberBatchesFailed' => ['0'], 'numberBatchesInProgress' => ['0'], 'numberBatchesQueued' => ['0'], 'numberBatchesTotal' => ['1'], 'numberRecordsFailed' => ['0'], 'numberRecordsProcessed' => ['10'], 'numberRetries' => ['0'], 'object' => ['Lead'], 'operation' => ['query'], 'state' => ['Closed'], 'systemModstamp' => ['2025-10-17T16:42:34.000Z'], 'totalProcessingTime' => ['0'], 'xmlns' => 'http://www.force.com/2009/06/asyncapi/dataload' })
+                                            'apiVersion' => [version], 'concurrencyMode' => ['Parallel'], 'contentType' => ['CSV'], 'createdById' => ['005PJ000002voWnYAI'], 'createdDate' => ['2025-10-31T23:13:39.000Z'], 'id' => [job_id], 'numberBatchesCompleted' => ['1'], 'numberBatchesFailed' => ['0'], 'numberBatchesInProgress' => ['0'], 'numberBatchesQueued' => ['0'], 'numberBatchesTotal' => ['1'], 'numberRecordsFailed' => ['0'], 'numberRecordsProcessed' => ['10'], 'numberRetries' => ['0'], 'object' => [sobject], 'operation' => ['query'], 'state' => ['Closed'], 'systemModstamp' => ['2025-10-31T23:13:39.000Z'], 'totalProcessingTime' => ['0'], 'xmlns' => 'http://www.force.com/2009/06/asyncapi/dataload' })
     end
   end
 
-  # https://developer.salesforce.com/docs/atlas.en-us.196.0.api_asynch.meta/api_asynch/asynch_api_using_bulk_query.htm
+  # https://developer.salesforce.com/docs/atlas.en-us.222.0.api_asynch.meta/api_asynch/asynch_api_using_bulk_query.htm
   describe '#add_query' do
     let(:records_or_query) do
       'select Id, Company_ID__c, OwnerId, IsConverted from Lead where Company_ID__c != null limit 10'
@@ -157,11 +157,11 @@ RSpec.describe SalesforceBulk::Job do
       <<~XML
         <?xml version="1.0" encoding="UTF-8"?><batchInfo
            xmlns="http://www.force.com/2009/06/asyncapi/dataload">
-         <id>#{batch_id}</id>
-         <jobId>#{job_id}</jobId>
+                 <id>#{batch_id}</id>
+                 <jobId>#{job_id}</jobId>
          <state>Queued</state>
-         <createdDate>2025-10-17T17:38:20.000Z</createdDate>
-         <systemModstamp>2025-10-17T17:38:20.000Z</systemModstamp>
+         <createdDate>2025-10-31T23:13:40.000Z</createdDate>
+         <systemModstamp>2025-10-31T23:13:40.000Z</systemModstamp>
          <numberRecordsProcessed>0</numberRecordsProcessed>
          <numberRecordsFailed>0</numberRecordsFailed>
          <totalProcessingTime>0</totalProcessingTime>
@@ -185,7 +185,7 @@ RSpec.describe SalesforceBulk::Job do
   end
 
   # https://developer.salesforce.com/docs/atlas.en-us.196.0.api_asynch.meta/api_asynch/asynch_api_batches_create.htm
-  describe '#add_batch' do
+  describe '#add_batch' do # TODO
     let(:operation) { 'update' }
     let(:records_or_query) do
       [
@@ -224,28 +224,36 @@ RSpec.describe SalesforceBulk::Job do
     end
   end
 
-  # https://developer.salesforce.com/docs/atlas.en-us.196.0.api_asynch.meta/api_asynch/asynch_api_batches_get_info_all.htm
+  # https://developer.salesforce.com/docs/atlas.en-us.222.0.api_asynch.meta/api_asynch/asynch_api_batches_get_info_all.htm
   describe '#fetch_pk_batch_ids' do
     let(:response_body) do
       <<~XML
-        <?xml version="1.0" encoding="UTF-8"?>
+                <?xml version="1.0" encoding="UTF-8"?>
         <batchInfoList
            xmlns="http://www.force.com/2009/06/asyncapi/dataload">
          <batchInfo>
           <id>#{batch_ids[0]}</id>
-          <jobId>750D0000000002lIAA</jobId>
+          <jobId>#{job_id}</jobId>
           <state>InProgress</state>
           <createdDate>2009-04-14T18:15:59.000Z</createdDate>
           <systemModstamp>2009-04-14T18:16:09.000Z</systemModstamp>
-          <numberRecordsProcessed>800</numberRecordsProcessed>
+          <numberRecordsProcessed>0</numberRecordsProcessed>
+          <numberRecordsFailed>0</numberRecordsFailed>
+          <totalProcessingTime>0</totalProcessingTime>
+          <apiActiveProcessingTime>0</apiActiveProcessingTime>
+          <apexProcessingTime>0</apexProcessingTime>
          </batchInfo>
          <batchInfo>
           <id>#{batch_ids[1]}</id>
-          <jobId>750D0000000002lIAA</jobId>
+          <jobId>#{job_id}</jobId>
           <state>InProgress</state>
           <createdDate>2009-04-14T18:16:00.000Z</createdDate>
           <systemModstamp>2009-04-14T18:16:09.000Z</systemModstamp>
           <numberRecordsProcessed>800</numberRecordsProcessed>
+          <numberRecordsFailed>0</numberRecordsFailed>
+          <totalProcessingTime>5870</totalProcessingTime>
+          <apiActiveProcessingTime>0</apiActiveProcessingTime>
+          <apexProcessingTime>2166</apexProcessingTime>
          </batchInfo>
         </batchInfoList>
       XML
@@ -263,23 +271,24 @@ RSpec.describe SalesforceBulk::Job do
     end
   end
 
-  # https://developer.salesforce.com/docs/atlas.en-us.196.0.api_asynch.meta/api_asynch/asynch_api_batches_get_info.htm
+  # https://developer.salesforce.com/docs/atlas.en-us.222.0.api_asynch.meta/api_asynch/asynch_api_batches_get_info.htm
   describe '#check_batch_status' do
     let(:response_body) do
       <<~XML
-        '<?xml version="1.0" encoding="UTF-8"?><batchInfo
+                <?xml version="1.0" encoding="UTF-8"?>
+        <batchInfo
            xmlns="http://www.force.com/2009/06/asyncapi/dataload">
-         <id>#{batch_id}</id>
-         <jobId>#{job_id}</jobId>
-         <state>Queued</state>
-         <createdDate>2025-10-17T16:42:34.000Z</createdDate>
-         <systemModstamp>2025-10-17T16:42:34.000Z</systemModstamp>
+          <id>#{batch_id}</id>
+          <jobId>#{job_id}</jobId>
+         <state>InProgress</state>
+         <createdDate>2009-04-14T18:15:59.000Z</createdDate>
+         <systemModstamp>2009-04-14T18:15:59.000Z</systemModstamp>
          <numberRecordsProcessed>0</numberRecordsProcessed>
          <numberRecordsFailed>0</numberRecordsFailed>
          <totalProcessingTime>0</totalProcessingTime>
          <apiActiveProcessingTime>0</apiActiveProcessingTime>
          <apexProcessingTime>0</apexProcessingTime>
-        </batchInfo>'
+        </batchInfo>
       XML
     end
 
@@ -292,19 +301,22 @@ RSpec.describe SalesforceBulk::Job do
     end
 
     it 'can adhere to the contract with Salesforce' do
-      expect(sf_bulk_job.check_batch_status).to eq('Queued')
+      expect(sf_bulk_job.check_batch_status).to eq('InProgress')
     end
   end
 
-  # https://developer.salesforce.com/docs/atlas.en-us.196.0.api_asynch.meta/api_asynch/asynch_api_batches_get_results.htm
-  # https://developer.salesforce.com/docs/atlas.en-us.196.0.api_asynch.meta/api_asynch/asynch_api_code_curl_walkthrough.htm
+  # https://developer.salesforce.com/docs/atlas.en-us.222.0.api_asynch.meta/api_asynch/asynch_api_code_curl_walkthrough.htm
   describe '#get_batch_result' do
     let(:xml_headers) { { 'Content-Type' => 'text/xml; charset=UTF-8' } }
-    let(:result_id) { 'some-result-id' }
+    let(:result_ids) { %w[some-result-id-1 some-result-id-2] }
+    let(:result_id) { result_ids[0] }
 
     let(:response_body_result_list) do
       <<~XML
-        <result-list xmlns="http://www.force.com/2009/06/asyncapi/dataload"><result>#{result_id}</result></result-list>
+        <?xml version="1.0" encoding="UTF-8"?>
+        <result-list xmlns="http://www.force.com/2009/06/asyncapi/dataload">
+          <result>#{result_id}</result>
+        </result-list>
       XML
     end
 
